@@ -1,0 +1,70 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: dev
+
+#rabbitMQ setting
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+#config server setting
+  cloud:
+    config:
+      enabled: true
+      name: gateway
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 3
+        max-interval: 2000
+        multiplier: 1.1
+      request-connect-timeout: 20000
+      request-read-timeout: 20000
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+#gateway routing setting
+    gateway:
+      mvc:
+        routes:
+          default-filters:
+            - name : LoggingFilter
+              args :
+                isPreLogger : true
+                isPostLogger : true
+          route:
+            - id : userservice
+              predicates :
+                - Path = /user-service/**
+              uri : lb://USERSERVICE
+              filters :
+                - RewritePath= /user-service/(?<segment>.*), /$\{segment}
+
+
+#eureka setting
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8765/eureka
+
+#actuator setting
+management:
+  endpoints:
+    web:
+      exposure:
+        include: httpexchange, busrefresh, health
+
+#logging level
+logging:
+  level:
+    org.springframework : DEBUG
+

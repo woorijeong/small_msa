@@ -1,0 +1,46 @@
+server:
+  port: 0
+spring:
+  application:
+    name: userservice
+  profiles:
+    active: dev
+
+#rabbitMQ setting
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+#config server setting
+  config:
+    import: "optional:configserver:http://127.0.0.1:8888"
+  cloud:
+    config:
+      name: userservice
+      enabled: true
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-interval: 2000
+        max-attempts: 3
+        multiplier: 1.1
+      request-read-timeout: 2000
+      request-connect-timeout: 2000
+
+
+#eureka setting
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8765/eureka
+
+#actuator setting
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, logs, busrefresh

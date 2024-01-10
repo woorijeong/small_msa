@@ -1,0 +1,32 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: configserver
+
+#config server setting
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/woorijeong/small_msa.git
+
+#rabbitMQ setting
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+#actuator setting
+management:
+  endpoints:
+    web:
+      exposure:
+        include: busrefresh, health
+
+#logging level
+logging:
+  level:
+    org.springframework : DEBUG
